@@ -1,0 +1,160 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum DealStatus {
+  FUTURE
+  ACTIVE
+  EXTENDED
+  COMPLETED
+  CANCELLED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  DELIVERED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  REFUNDED
+  FAILED
+}
+
+enum UserRole {
+  BUYER
+  SUPPLIER
+  ADMIN
+}
+
+model User {
+  id            String         @id @default(uuid())
+  email         String?        @unique
+  phone         String         @unique
+  password      String
+  name          String
+  role          UserRole       @default(BUYER)
+  orders        Order[]
+  notifications Notification[]
+  auditLogs     AuditLog[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model Supplier {
+  id            String      @id @default(uuid())
+  name          String
+  contactPerson String
+  email         String?     @unique
+  phone         String      @unique
+  address       String?
+  materialTypes String[]
+  isActive      Boolean     @default(true)
+  deals         Deal[]
+  inventory     Inventory[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model Deal {
+  id              String      @id @default(uuid())
+  title           String
+  description     String?
+  imageUrl        String?
+  price           Decimal
+  targetQuantity  Int
+  currentQuantity Int         @default(0)
+  startDate       DateTime
+  endDate         DateTime
+  status          DealStatus  @default(FUTURE)
+  autoExtend      Boolean     @default(false)
+  supplierId      String
+  supplier        Supplier    @relation(fields: [supplierId], references: [id])
+  orders          Order[]
+  phases          DealPhase[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model DealPhase {
+  id        String    @id @default(uuid())
+  dealId    String
+  deal      Deal      @relation(fields: [dealId], references: [id])
+  name      String
+  startDate DateTime
+  endDate   DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model Order {
+  id               String            @id @default(uuid())
+  userId           String
+  user             User              @relation(fields: [userId], references: [id])
+  dealId           String
+  deal             Deal              @relation(fields: [dealId], references: [id])
+  quantity         Int
+  totalAmount      Decimal
+  status           OrderStatus       @default(PENDING)
+  payment          Payment?
+  deliverySchedule DeliverySchedule?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+model Payment {
+  id            String        @id @default(uuid())
+  orderId       String        @unique
+  order         Order         @relation(fields: [orderId], references: [id])
+  amount        Decimal
+  status        PaymentStatus @default(PENDING)
+  transactionId String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model Inventory {
+  id         String   @id @default(uuid())
+  supplierId String
+  supplier   Supplier @relation(fields: [supplierId], references: [id])
+  itemName   String
+  quantity   Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model DeliverySchedule {
+  id           String   @id @default(uuid())
+  orderId      String   @unique
+  order        Order    @relation(fields: [orderId], references: [id])
+  deliveryDate DateTime
+  address      String
+  status       String   @default("SCHEDULED")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String
+  details   String?
+  createdAt DateTime @default(now())
+}
