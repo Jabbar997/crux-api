@@ -33,5 +33,11 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "tsx": "^4.20.6"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   }
 }

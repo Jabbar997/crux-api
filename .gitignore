@@ -12,6 +12,6 @@ Thumbs.db
 *.log
 npm-debug.log*
 
-# Environment
-.env.local
-.env.*.local
+# Temporary
+tmp/
+temp/
