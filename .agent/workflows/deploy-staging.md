@@ -1,20 +1,62 @@
 ---
-description: Deploy application to staging environment
+description: Deploy to staging environment
 ---
 
-1.  **Pre-Deployment Check**:
-    *   Ensure all tests pass.
-    *   Ensure `main` branch is up to date.
-    *   Check `package.json` version.
-2.  **Backend Deploy (Render)**:
-    *   Push to `main`.
-    *   Render auto-deploys (if configured).
-    *   Verify logs in Render dashboard.
-3.  **Frontend Deploy**:
-    *   Build web: `flutter build web`.
-    *   Deploy to hosting (e.g., Firebase/Vercel).
-    *   OR Build APK: `flutter build apk --release`.
-4.  **Smoke Test**:
-    *   Log in.
-    *   View Deals.
-    *   Create a dummy order.
+# Deploy to Staging Workflow
+
+## Pre-Deployment Checklist:
+- [ ] All tests pass locally
+- [ ] Branch merged to `develop`
+- [ ] Environment variables verified
+- [ ] Database migrations prepared
+- [ ] Rollback plan documented
+
+## Deployment Steps:
+
+1. **Prepare**
+```bash
+   git checkout develop
+   git pull origin develop
+   npm run build
+   npm test
+```
+
+2. **Database Migration** (if needed)
+```bash
+   cd backend
+   npx prisma migrate deploy
+```
+
+3. **Deploy Backend**
+```bash
+   # SSH to staging server
+   ssh user@staging-server
+   cd /opt/crux-backend
+   git pull origin develop
+   npm install
+   npm run build
+   pm2 restart crux-api
+```
+
+4. **Deploy Frontend** (Future - when mobile)
+   - Build APK/IPA
+   - Upload to TestFlight/Internal Testing
+
+5. **Verify Deployment**
+   - [ ] Health check: `curl https://staging.crux-api.com/health`
+   - [ ] Test critical endpoints
+   - [ ] Check logs: `pm2 logs crux-api`
+   - [ ] Test one full flow (register → join deal)
+
+6. **Rollback** (if issues)
+```bash
+   git checkout [previous-commit]
+   npm install
+   npm run build
+   pm2 restart crux-api
+```
+
+## Post-Deployment:
+- Update deployment log
+- Notify team on Slack
+- Monitor for 1 hour

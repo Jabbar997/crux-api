@@ -1,16 +1,49 @@
 ---
-description: Create a new API endpoint in the backend
+description: Create a new REST API endpoint with tests
 ---
 
-1.  **Identify Module**: Determine which module the endpoint belongs to (e.g., `auth`, `deals`). If new, create the folder structure.
-2.  **Define Route**: Add the route in `{module}.routes.ts`.
-3.  **Create Controller**: Add the method in `{module}.controller.ts`.
-    *   Use `try/catch`.
-    *   Validate input using Zod.
-    *   Call the service.
-    *   Return appropriate HTTP status (200, 201, 400, etc.).
-4.  **Implement Service**: Add business logic in `{module}.service.ts`.
-    *   Interact with Prisma.
-    *   Handle exceptions.
-5.  **Add Tests**: Create a test file `{module}.test.ts` and add unit tests for the service method.
-6.  **Verify**: Run the server and test with `curl` or Postman.
+# Create API Endpoint Workflow
+
+## Steps:
+
+1. **Define Route**
+   - Add route to appropriate router file
+   - Use clear, RESTful naming (plural nouns)
+   - Example: `POST /api/v1/deals/:id/join`
+
+2. **Create Controller**
+   - In `backend/src/modules/[module]/[module].controller.ts`
+   - Validate request with Zod schema
+   - Call service layer
+   - Handle errors gracefully
+   - Return consistent response format
+
+3. **Create Service**
+   - In `backend/src/modules/[module]/[module].service.ts`
+   - Implement business logic
+   - Use Prisma for database operations
+   - Handle transactions if needed
+   - Log important actions
+
+4. **Add Validation Schema**
+   - Create Zod schema in `[module].validation.ts`
+   - Validate: body, params, query
+   - Custom validators for: phone, iqama, amount
+
+5. **Write Tests**
+   - Unit tests for service logic
+   - Integration tests for endpoint
+   - Test success cases
+   - Test error cases (validation, business rules)
+   - Test edge cases
+   - Mock external dependencies
+
+6. **Document API**
+   - Add OpenAPI/Swagger annotations
+   - Include example request/response
+   - Document error codes
+   - Update Postman collection
+
+7. **Update CHANGELOG**
+   - Add entry under "Unreleased"
+   - Format: `- Added [endpoint name] ([PR number])`

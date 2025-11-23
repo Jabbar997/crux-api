@@ -1,22 +1,67 @@
 ---
-description: Add a new full-stack feature
+description: Add a new feature to the application
 ---
 
-1.  **Plan**:
-    *   Define requirements in `task.md`.
-    *   Update `implementation_plan.md`.
-2.  **Backend**:
-    *   Update Prisma schema if needed (`npx prisma migrate dev`).
-    *   Run `create-api-endpoint` workflow for necessary APIs.
-3.  **Frontend**:
-    *   Create feature folder: `lib/features/{feature_name}`.
-    *   Create `data/repository.dart` to call the API.
-    *   Create `domain/models` for data types.
-    *   Create `presentation/controllers` (Riverpod).
-    *   Create `presentation/screens` (UI).
-4.  **Integrate**:
-    *   Connect UI to Controller to Repository.
-5.  **Test**:
-    *   Run backend tests.
-    *   Run frontend widget tests.
-    *   Manual verification.
+# Add Feature Workflow
+
+## Planning Phase:
+
+1. **Requirements Document**
+   - Write user story
+   - Define acceptance criteria
+   - Identify affected modules
+   - Create task breakdown
+
+2. **Design**
+   - Update ERD if database changes needed
+   - Design API contract
+   - Design UI mockups (if frontend)
+   - Identify security concerns
+
+## Implementation Phase:
+
+3. **Database Changes**
+   - Create Prisma migration
+   - Update schema
+   - Add seed data for testing
+
+4. **Backend**
+   - Create/update models
+   - Implement services
+   - Create controllers
+   - Add validation
+
+5. **Frontend** (if applicable)
+   - Create new screens/widgets
+   - Implement state management (Riverpod)
+   - Add navigation routes
+   - Handle loading/error states
+
+6. **Testing**
+   - Write unit tests
+   - Write integration tests
+   - Manual testing checklist
+   - Test with Arabic data
+   - Test RTL layouts
+
+7. **Documentation**
+   - Update API docs
+   - Update user guide
+   - Add code comments
+   - Update README if needed
+
+## Review Phase:
+
+8. **Code Review Checklist**
+   - [ ] All tests pass
+   - [ ] No console.logs left
+   - [ ] No hardcoded values
+   - [ ] Error handling complete
+   - [ ] Arabic translations added
+   - [ ] Security reviewed
+   - [ ] Performance acceptable
+
+9. **Deployment Prep**
+   - Update environment variables
+   - Update deployment guide
+   - Prepare rollback plan
